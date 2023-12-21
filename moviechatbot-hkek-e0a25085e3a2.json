@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "moviechatbot-hkek",
+  "private_key_id": "e0a25085e3a215f4df2dd2601f339e42d1358e71",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCqSLnH6Z3lJO+I\nE9AlswjQAia8J2to/ZCNFhSTNvUujVgkSIfXRnbZ15nZ680QJvPaNUSEU5Uw1iT/\n2/d+ecniQOMAey4qi0wHioZ/MdMeyZRrJylMZAqX90W8YoUwsp06iKXHleeKhULj\nJNCM0SQvPtbV8qCoLSMGNmk5UAx2o9gxAIHNbn7gm6vWayaPB+T3FlBXmTqodq6p\n20svqO3B7noUODmtnAh0TE3W+oaYSPJAKPvxqFC2f3O3rDN0aW2L37Qr4Yhr3cZz\ntk3AkUyJs3/q4T7kiLc3EZUuJWbvqO6B0jBmDIfL9zNG9Xmf+KV2pIAJXu7ZojRI\nGq5BUK0nAgMBAAECggEAGVdTVn3cwpIZl32jV0jqgdIgI5YWNPyvO1/S1gmyuSfN\nuzCUDqRs4YRlX/nofYPefFW7CZpKtIbZ4L3Cei7zrVkMrzClsS0jtmeWFm26xnUn\nQj8EtVqZ/P2OgjeDLLkYDvLxAN+9Im8sghMjeiFRqjpGzHYcFIsLEEyeoinYgPso\n5MzwALHLX60DCSoxw9pPbLOXSnV+N4BWVe0y3/uJxhVgtv4mtSUyY/lVJXdyuY+G\nf8BAXwJCAUCqg+BcxBBV7NiEw7Tm4CjV6lsTJYvvcgIQjQtIjzpBwj+de5DK+sLm\nybEqTBXk4Lw9yOVUEvFXCSUvWSnCcrV+uZ4GaFO+kQKBgQDbKW81b+lVj1vBzEQ4\n2iDMjc5FW3JjqboLePmhDN+YIFlzWfey5IPU4IGYTCoI7+VS79VNoSUQxIKmOAwH\nm5Z+8369GesivqP2v4/YFRLMFvXkIoSpILPfZCa1X4kIfb+VTGQrnJO8p9D92cDX\nFhPmIWkFjgtdzdzrm56DEPEA+QKBgQDG6BLxqSWdnIUPVXqOvStBR5QBe1SgHCWO\na+0dNC2iwjsoQ2B6hQ+1jfjTBj6ma9Pih0wk+fSW+KnJDF9Y53fFly+aK+Dbtrw8\nwrErPVPmomulhJfCWPP5VGq8p+MleLaEbJQoZj+FRyKZWbM7PozKL+AK5BSo10aE\n797+N2DHHwKBgQCOx4e0AJy7KRJWR4WKpFEJ8riXZuQ3GbQjFUVMLt7cdPbRt6Mv\n4MAiR8EmPziDaga06ZrFYF6NdfjH4Wu06SA6xNekyuXtVNXtQw+rbs84Nx0q63IR\n3URSHSU6tGrKJWJTGdmIsBFvrsTxHJQNjEyaeNm6zLeK/TsYI+I48SiRwQKBgCEi\n7HUB/thBCRHC5cX90cTwTcHpb/G0frU5Wakx1iB1RzGv99SxciqG2lsdgTZsZEIq\n1A6c7ZhxGKf7va6r8RIj27RNdwpjaPyeWrGfZ+jWSiSq8DVaaFqzK4z+UyMc9xsc\nk5ofXpmvfh4aCXfnNcFBNIvb720pYAApjfa/9wl1AoGAVq9HuHuoO4POYyfZhj7U\n+skeWwvAwkDMqlNhPUO0bdK8vwxCKUEdkuA2tENPqwkc68PG4EOQDBhbKx580MWi\nux/mD0YQR5fb8ykQBFTUiAqwq2ta9SUMmEvyDCYoYuYVTSLnloE0xl2YZy+kTBmT\nt1T2SMfTMT6ICDHiDws3eqg=\n-----END PRIVATE KEY-----\n",
+  "client_email": "movie-service@moviechatbot-hkek.iam.gserviceaccount.com",
+  "client_id": "111469124249987875634",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/movie-service%40moviechatbot-hkek.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
