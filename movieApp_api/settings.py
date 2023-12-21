@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import cloudinary_storage
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -98,6 +99,8 @@ DATABASES = {
     }  
 }
 
+DATABASES['default'] = dj_database_url.parse("postgres://movieapp_v8mx_user:Ziz7w9tkQDxQFetR1nTj0nKb9DqOEZpm@dpg-cm1v9smn7f5s73epj1fg-a.oregon-postgres.render.com/movieapp_v8mx")
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -157,7 +160,7 @@ PAYPAL_MODE = 'sandbox'
 PAYPAL_RECEIVER_EMAIL = 'ntmkhue.20it6@vku.udn.vn'
 PAYPAL_TEST = True
 
-CLOUNDINARY_STORAGE = {
+CLOUDINARY_STORAGE = {
     "CLOUD_NAME": "dm0wmcxlz",
     "API_KEY": "766935793277724",
     "API_SECRET": "9jDYjetU3nojdcMWtNYer5KpCRo"

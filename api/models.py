@@ -54,7 +54,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     ])
     dateBirth = models.DateField(null=True)
     address = models.TextField()
-    profile_pic = models.ImageField(default="media/user.jpg", upload_to='media/profile_pics', null=True)
+    profile_pic = models.ImageField(default="mediaMovie/user.jpg", upload_to='media/profile_pics', null=True)
     lastLogin = models.DateTimeField(auto_now_add=True, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -103,7 +103,7 @@ class Movie(models.Model):
     # language = models.CharField(choices=languages, max_length=30, blank=True)
     tagline = models.CharField(max_length=300, null=True)
     description = models.TextField()
-    posterImage = models.ImageField(upload_to='media/posters/', default="media/user.jpg")
+    posterImage = models.ImageField(upload_to='mediaMovie/posters/', default="media/user.jpg")
     views = models.PositiveIntegerField(default=0)
     rating = models.FloatField(validators=[MinValueValidator(0), MaxValueValidator(5)], default=0)
     isAvailable = models.BooleanField(default=True)
@@ -134,7 +134,7 @@ class Movie(models.Model):
     
 class Actor(models.Model):
     name = models.CharField(max_length=30, unique=True)
-    image = models.ImageField(upload_to='media/actors/', default="media/user.jpg")
+    image = models.ImageField(upload_to='mediaMovie/actors/', default="media/user.jpg")
     character = models.CharField(max_length=100, null=True)
 
     # def get_absolute_url(self):
