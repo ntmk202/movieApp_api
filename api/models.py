@@ -79,20 +79,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.fullname
     
 class Movie(models.Model):
-    # languages = (
-    #     ('English','English'),
-    #     ('Spanish','Spanish'),
-    #     ('French','French'),
-    #     ('German','German'),
-    #     ('Italian','Italian'),
-    #     ('Portuguese','Portuguese'),
-    #     ('Russian','Russian'),
-    #     ('Turkish','Turkish'),
-    #     ('Chinese','Chinese'),
-    #     ('Japanese','Japanese'),
-    #     ('Korean','Korean'),
-    #     ('Other','Other'),
-    #     )
     title = models.CharField(max_length=200, unique=True)
     genre = models.CharField(max_length=200)
     trailer = EmbedVideoField()
@@ -100,7 +86,6 @@ class Movie(models.Model):
     actors = models.ManyToManyField('Actor')
     durationInMinutes = models.PositiveSmallIntegerField()
     release_date = models.DateField()
-    # language = models.CharField(choices=languages, max_length=30, blank=True)
     tagline = models.CharField(max_length=300, null=True)
     description = models.TextField()
     posterImage = models.ImageField(upload_to='mediaMovie/posters/', default="media/user.jpg")
@@ -178,9 +163,9 @@ class Showtimes(models.Model):
                 "type": "object",
                 "properties": {
                     "starttime": {"type": "string", "format": "time"},
-                    "endtime": {"type": "string", "format": "time"},
+                    "endtime": {"type": "string", "format": "time", "blank": True},
                 },
-                "required": ["starttime", "endtime"],
+                "required": ["starttime"],
             },
             "minItems": 0,
             "maxItems": 10,
@@ -188,12 +173,31 @@ class Showtimes(models.Model):
     )
     available = models.BooleanField(default=True)
 
+    def save(self, *args, **kwargs):
+        # Calculate endtime if it's blank
+        for slot in self.time:
+            if "endtime" not in slot or not slot["endtime"]:
+                # Calculate endtime based on starttime + movie duration
+                starttime = slot["starttime"]
+                duration = self.movie.durationInMinutes
+                slot["endtime"] = calculate_endtime(starttime, duration)
+
+        super().save(*args, **kwargs)
+
     @property
     def titleMovie(self):
         return self.movie.title
 
     def __str__(self):
         return f"Showing {self.movie.title} at {self.showtime}"
+    
+def calculate_endtime(starttime, duration):
+    # Implement logic to calculate endtime from starttime and duration
+    # This could involve parsing the time, adding minutes, and formatting back to a string
+    # Example logic (you may need to adjust based on your specific requirements):
+    start_datetime = datetime.strptime(starttime, "%H:%M")
+    end_datetime = start_datetime + datetime.timedelta(minutes=duration)
+    return end_datetime.strftime("%H:%M")
 
 class Booking(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
