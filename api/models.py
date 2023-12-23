@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from time import strptime
+# from time import strptime
 from django.db import models
 from theater.models import Room, Seat, PopconsAndDrinks, Voucher
 from django.contrib.auth.models import UserManager, AbstractBaseUser, PermissionsMixin
@@ -164,7 +164,7 @@ class Showtimes(models.Model):
                 "type": "object",
                 "properties": {
                     "starttime": {"type": "string", "format": "time"},
-                    "endtime": {"type": "string", "format": "time", "blank": True},
+                    "endtime": {"type": "string", "format": "time", "blank": True, "editable": False},
                 },
                 "required": ["starttime"],
             },
@@ -177,7 +177,7 @@ class Showtimes(models.Model):
     def save(self, *args, **kwargs):
         # Calculate endtime if it's blank
         for slot in self.time:
-            if "endtime" not in slot or not slot["endtime"]:
+            if "endtime" in slot or not slot["endtime"]:
                 # Calculate endtime based on starttime + movie duration
                 starttime = slot["starttime"]
                 duration = self.movie.durationInMinutes
@@ -193,10 +193,7 @@ class Showtimes(models.Model):
         return f"Showing {self.movie.title} at {self.showtime}"
     
 def calculate_endtime(starttime, duration):
-    # Implement logic to calculate endtime from starttime and duration
-    # This could involve parsing the time, adding minutes, and formatting back to a string
-    # Example logic (you may need to adjust based on your specific requirements):
-    start_datetime = strptime(starttime, "%H:%M")
+    start_datetime = datetime.strptime(starttime, "%H:%M")
     end_datetime = start_datetime + timedelta(minutes=duration)
     return end_datetime.strftime("%H:%M")
 
