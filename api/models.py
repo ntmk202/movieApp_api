@@ -1,4 +1,5 @@
-import datetime
+from datetime import datetime, timedelta
+from time import strptime
 from django.db import models
 from theater.models import Room, Seat, PopconsAndDrinks, Voucher
 from django.contrib.auth.models import UserManager, AbstractBaseUser, PermissionsMixin
@@ -195,8 +196,8 @@ def calculate_endtime(starttime, duration):
     # Implement logic to calculate endtime from starttime and duration
     # This could involve parsing the time, adding minutes, and formatting back to a string
     # Example logic (you may need to adjust based on your specific requirements):
-    start_datetime = datetime.strptime(starttime, "%H:%M")
-    end_datetime = start_datetime + datetime.timedelta(minutes=duration)
+    start_datetime = strptime(starttime, "%H:%M")
+    end_datetime = start_datetime + timedelta(minutes=duration)
     return end_datetime.strftime("%H:%M")
 
 class Booking(models.Model):
