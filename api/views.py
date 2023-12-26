@@ -105,33 +105,44 @@ class Showtime(ListAPIView, RetrieveAPIView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        # Extract values from URL parameters if available
-        showtime = self.kwargs.get('showtime')
-        pk = self.kwargs.get('pk')
+
+        # Extract values from URL parameters
+        showtime = self.request.query_params.get('showtime')
+        id_movie = self.request.query_params.get('idMovie')
+        pk = self.request.query_params.get('id')
 
         # Build the filter based on the presence of parameters
         filter_kwargs = {}
         if showtime is not None:
             filter_kwargs['showtime'] = showtime
+        if id_movie is not None:
+            filter_kwargs['movie__id'] = id_movie 
         if pk is not None:
             filter_kwargs['pk'] = pk
 
         # Filter the queryset based on the constructed filter_kwargs
         return queryset.filter(**filter_kwargs)
 
-    def get_object(self):
-        queryset = self.get_queryset()
-        filter = {"id","showtime"}
-        for field in self.multiple_lookup_fields:
-            filter[field] = self.kwargs[field]
+    # def get_object(self):
+    #     queryset = self.get_queryset()
 
-        try:
-            obj = queryset.get(**filter)
-            self.check_object_permissions(self.request, obj)
-            return obj
-        except Showtimes.DoesNotExist:
-            # Customize the response when the object is not found
-            return Response({"detail": "Object not found."}, status=status.HTTP_404_NOT_FOUND)
+    #     # Extract values from URL parameters
+    #     pk = self.request.query_params.get('id')
+    #     showtime = self.request.query_params.get('showtime')
+
+    #     filter_kwargs = {}
+    #     if pk is not None:
+    #         filter_kwargs['pk'] = pk
+    #     if showtime is not None:
+    #         filter_kwargs['showtime'] = showtime
+
+    #     try:
+    #         obj = queryset.get(**filter_kwargs)
+    #         self.check_object_permissions(self.request, obj)
+    #         return obj
+    #     except Showtimes.DoesNotExist:
+    #         # Customize the response when the object is not found
+    #         return Response({"detail": "Object not found."}, status=status.HTTP_404_NOT_FOUND)
 
 class Evulation(ListCreateAPIView, RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]

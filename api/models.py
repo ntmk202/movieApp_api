@@ -186,8 +186,8 @@ class Showtimes(models.Model):
         super().save(*args, **kwargs)
 
     @property
-    def titleMovie(self):
-        return self.movie.title
+    def idMovie(self):
+        return self.movie.id
 
     def __str__(self):
         return f"Showing {self.movie.title} at {self.showtime}"

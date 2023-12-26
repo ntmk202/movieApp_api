@@ -97,7 +97,7 @@ class MovieDetailSerializer(serializers.ModelSerializer):
         fields = ('id','title', 'durationInMinutes', 'release_date', 'posterImage',)
 
 class ShowtimeSerializer(serializers.ModelSerializer):
-    movie = MovieSerializer(read_only=True)
+    movie = MovieDetailSerializer(read_only=True)
     roomNumber = RoomSerializer(read_only=True)
     class Meta:
         model = Showtimes

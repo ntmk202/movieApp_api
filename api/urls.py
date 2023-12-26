@@ -18,8 +18,8 @@ urlpatterns = [
 
     path('showtimes/', Showtime.as_view(), name='all-showtimes'),
     path('showtimes/<int:pk>/', Showtime.as_view(), name='showtimes-id'),
-    path('showtimes/<str:showtime>/', Showtime.as_view(), name='showtimes-by-date'),
-    path('showtimes/<str:showtime>/<int:pk>/', Showtime.as_view(), name='showtimes-by-date-id'),
+    # path('showtimes/<str:showtime>/', Showtime.as_view(), name='showtimes-by-date'),
+    # path('showtimes/<int:pk>/<str:showtime>/', Showtime.as_view(), name='showtimes-by-date-id'),
 
     path('evulations/<int:idMovie>/', Evulation.as_view(), name='evulation'),
     path('evulations/<int:idMovie>/<int:pk>/', Evulation.as_view(), name='evulation'),
