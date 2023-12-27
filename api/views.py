@@ -90,6 +90,7 @@ class Movie(ListAPIView, RetrieveAPIView):
     authentication_classes = []
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
+    lookup_field = 'title'
 
 class Actor(ListAPIView, RetrieveAPIView):
     permission_classes = []

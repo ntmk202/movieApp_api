@@ -9,7 +9,7 @@ urlpatterns = [
     path('users/profile/<str:fullname>/', UserProfile.as_view(), name='profile'),
     
     path('movies/', Movie.as_view(), name='all-movies'),
-    path('movies/<int:pk>/', Movie.as_view(), name='movies'),
+    path('movies/<str:title>/', Movie.as_view(), name='movies'),
 
     # path('directors/', Director.as_view(), name='all-directors'),
     # path('directors/<int:pk>/', Director.as_view(), name='directors-detail'),

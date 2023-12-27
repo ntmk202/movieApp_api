@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta
 # from time import strptime
 from django.db import models
+from django.dispatch import receiver
 from theater.models import Room, Seat, PopconsAndDrinks, Voucher
 from django.contrib.auth.models import UserManager, AbstractBaseUser, PermissionsMixin
 from django.core.validators import RegexValidator, MaxValueValidator, MinValueValidator, MinLengthValidator
 from django.urls import reverse
+from django.db.models.signals import pre_save
 from django_jsonform.models.fields import JSONField
 from embed_video.fields import EmbedVideoField
 from django.core.exceptions import ValidationError
@@ -55,7 +57,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     ])
     dateBirth = models.DateField(null=True)
     address = models.TextField()
-    profile_pic = models.ImageField(default="mediaMovie/user.jpg", upload_to='media/profile_pics', null=True)
+    profile_pic = models.ImageField(default="media/user.jpg", upload_to='mediaMovie/profile_pics', null=True)
     lastLogin = models.DateTimeField(auto_now_add=True, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -164,13 +166,28 @@ class Showtimes(models.Model):
                 "type": "object",
                 "properties": {
                     "starttime": {"type": "string", "format": "time"},
-                    "endtime": {"type": "string", "format": "time", "blank": True, "editable": False},
+                    "endtime": {"type": "string", "format": "time", "blank": True, "readonly": True},
                 },
                 "required": ["starttime"],
             },
             "minItems": 0,
             "maxItems": 10,
         },
+    )
+    available_seats = JSONField(
+        default=list,
+        schema={
+            "type": "array",
+            "items": {
+                "type": "object",
+                "readonly":"true",
+                "properties": {
+                    "seatNo": {"type": "string"},
+                    "is_available": {"type": "boolean"},
+                },
+            }
+        },
+        null=True, blank=True,
     )
     available = models.BooleanField(default=True)
 
@@ -182,6 +199,15 @@ class Showtimes(models.Model):
                 starttime = slot["starttime"]
                 duration = self.movie.durationInMinutes
                 slot["endtime"] = calculate_endtime(starttime, duration)
+
+        # Retrieve seat data for the given roomNumber
+        seats_in_room = Seat.objects.filter(room=self.roomNumber)
+        self.available_seats = []
+        for seat in seats_in_room:
+            self.available_seats.append({
+                "seatNo": seat.seatNo,
+                "is_available": seat.is_available,
+            })
 
         super().save(*args, **kwargs)
 
