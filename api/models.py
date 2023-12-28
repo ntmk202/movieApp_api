@@ -98,10 +98,10 @@ class Movie(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
 
-    def update_views(self):
-        bookings_count = Booking.objects.filter(showtime__movie=self).count()
-        self.views = bookings_count
-        self.save()
+    # def update_views(self):
+    #     bookings_count = Booking.objects.filter(showtime__movie=self).count()
+    #     self.views = bookings_count
+    #     self.save()
 
     def update_rating(self):
         evaluations = Evulation.objects.filter(movie=self)
@@ -243,9 +243,9 @@ class Booking(models.Model):
     paypal_payment_id = models.CharField(max_length=50, null=True, blank=True)
     status = models.CharField(max_length=30, choices=(('Pending','Pending'), ('Successful','Successful'), ('Failed','Failed')), default='Pending')
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.showtime.movie.update_views()
+    # def save(self, *args, **kwargs):
+    #     super().save(*args, **kwargs)
+    #     self.showtime.movie.update_views()
 
     def clean(self):
         # Check if both user and fullname are empty
