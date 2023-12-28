@@ -224,7 +224,7 @@ def calculate_endtime(starttime, duration):
     return end_datetime.strftime("%H:%M")
 
 class Booking(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
+    user = models.CharField(max_length=50, null=True, blank=True)
     fullname = models.CharField(max_length=50, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     number = models.CharField(max_length=15, validators=[
@@ -233,8 +233,8 @@ class Booking(models.Model):
             message='Number only'
         )
     ], null=True, blank=True)
-    showtime = models.ForeignKey(Showtimes, on_delete=models.CASCADE)
-    seat = models.CharField(max_length=100, null=True, blank=True)
+    titleMovie = models.CharField(max_length=200, null=True, blank=True)
+    seat = models.ManyToManyField(Seat, null=True)
     voucher = models.ForeignKey(Voucher, on_delete=models.SET_NULL, null=True, blank=True)
     snacks = models.ForeignKey(PopconsAndDrinks, on_delete=models.SET_NULL, null=True, blank=True)
     bookedAt = models.DateTimeField(auto_now_add=True)
