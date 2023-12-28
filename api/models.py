@@ -182,6 +182,7 @@ class Showtimes(models.Model):
                 "type": "object",
                 "readonly":"true",
                 "properties": {
+                    "id": {"type": "string"}
                     "seatNo": {"type": "string"},
                     "is_available": {"type": "boolean"},
                 },
@@ -205,6 +206,7 @@ class Showtimes(models.Model):
         self.available_seats = []
         for seat in seats_in_room:
             self.available_seats.append({
+                "id": seat.id,
                 "seatNo": seat.seatNo,
                 "is_available": seat.is_available,
             })
