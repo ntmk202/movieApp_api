@@ -258,7 +258,7 @@ class Booking(models.Model):
 
     def __str__(self):
         # seat_numbers = ', '.join(str(seat.seatNo) for seat in self.seat.all())
-        return f'Booking of Movie {self.showtime.movie.title} from {self.bookedAt} to {self.expiresIn // 60} hours.'
+        return f'Booking of Movie {self.titleMovie} from {self.bookedAt} to {self.expiresIn // 60} hours.'
 
 
     
