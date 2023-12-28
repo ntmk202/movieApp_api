@@ -1,5 +1,7 @@
+import base64
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import get_object_or_404
+import requests
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateAPIView, RetrieveAPIView, RetrieveUpdateDestroyAPIView, ListCreateAPIView
@@ -10,6 +12,8 @@ from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
 from paypalrestsdk import Payment, exceptions
+
+from movieApp_api import settings
 from .models import CustomUser, Movie, Actor, Evulation, Showtimes, Booking
 from .serializers import UserSerializer, UserRegistSerializer, ProfileSerializer, MovieSerializer, ActorSerializer, ShowtimeSerializer, EvulationSerializer, BookingSerializer
 
@@ -124,27 +128,6 @@ class Showtime(ListAPIView, RetrieveAPIView):
         # Filter the queryset based on the constructed filter_kwargs
         return queryset.filter(**filter_kwargs)
 
-    # def get_object(self):
-    #     queryset = self.get_queryset()
-
-    #     # Extract values from URL parameters
-    #     pk = self.request.query_params.get('id')
-    #     showtime = self.request.query_params.get('showtime')
-
-    #     filter_kwargs = {}
-    #     if pk is not None:
-    #         filter_kwargs['pk'] = pk
-    #     if showtime is not None:
-    #         filter_kwargs['showtime'] = showtime
-
-    #     try:
-    #         obj = queryset.get(**filter_kwargs)
-    #         self.check_object_permissions(self.request, obj)
-    #         return obj
-    #     except Showtimes.DoesNotExist:
-    #         # Customize the response when the object is not found
-    #         return Response({"detail": "Object not found."}, status=status.HTTP_404_NOT_FOUND)
-
 class Evulation(ListCreateAPIView, RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
@@ -190,70 +173,139 @@ class Bookings(ListCreateAPIView, RetrieveAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
 
-class PayPalPaymentView(View):
-    @csrf_exempt
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
 
-    def post(self, request, booking_id):
-        booking = get_object_or_404(Booking, id=booking_id)
 
-        # Create a PayPal payment object
-        payment = Payment({
-            "intent": "sale",
-            "payer": {"payment_method": "paypal"},
-            "redirect_urls": {
-                "return_url": f"{request.build_absolute_uri('/')}/api/paypal/success/",
-                "cancel_url": f"{request.build_absolute_uri('/')}/api/paypal/cancel/",
-            },
-            "transactions": [
-                {
-                    "amount": {"total": str(booking.totalPrice), "currency": "USD"},
-                    "description": f"Booking #{booking.id}",
-                }
-            ],
-        })
+clientID = settings.PAYPAL_CLIENT_ID
+clientSecret = settings.PAYPAL_CLIENT_SECRET
 
-        if payment.create():
-            # Save the PayPal payment ID to the booking
-            booking.paypal_payment_id = payment.id
-            booking.save()
+def PaypalToken(client_ID, client_Secret):
 
-            # Get the approval URL from the payment links
-            for link in payment.links:
-                if link.rel == "approval_url":
-                    approval_url = link.href
-                    return Response({"redirect_url": approval_url}, content_type="application/json")
+    url = "https://api.sandbox.paypal.com/v1/oauth2/token"
+    data = {
+                "client_id":client_ID,
+                "client_secret":client_Secret,
+                "grant_type":"client_credentials"
+            }
+    headers = {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": "Basic {0}".format(base64.b64encode((client_ID + ":" + client_Secret).encode()).decode())
+            }
 
-        return Response({"detail": "Error creating PayPal payment"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    token = requests.post(url, data, headers=headers)
+    return token.json()['access_token']
     
-class PayPalSuccessView(View):
+
+class CreateOrderViewRemote(APIView):
+
     def get(self, request):
-        payment_id = request.GET.get('paypal_payment_id')
-        booking_id = request.GET.get('id')
+        token = PaypalToken(clientID, clientSecret)
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+token,
+        }
+        json_data = {
+             "intent": "CAPTURE",
+             "application_context": {
+                 "notify_url": "http://127.0.0.1:8000/api/",
+                 "return_url": "http://127.0.0.1:8000/api/",#change to your doma$
+                 "cancel_url": "http://127.0.0.1:8000/api/", #change to your domain
+                 "brand_name": "PESAPEDIA SANDBOX",
+                 "landing_page": "BILLING",
+                 "shipping_preference": "NO_SHIPPING",
+                 "user_action": "CONTINUE"
+             },
+             "purchase_units": [
+                 {
+                     "reference_id": "294375635",
+                     "description": "African Art and Collectibles",
 
-        try:
-            payment = Payment.find(payment_id)
-            booking = Booking.objects.get(id=booking_id)
+                     "custom_id": "CUST-AfricanFashion",
+                     "soft_descriptor": "AfricanFashions",
+                     "amount": {
+                         "currency_code": "USD",
+                         "value": "200" #amount,
+                     },
+                 }
+             ]
+         }
+        response = requests.post('https://api-m.sandbox.paypal.com/v2/checkout/orders', headers=headers, json=json_data)
+        order_id = response.json()['id']
+        linkForPayment = response.json()['links'][1]['href']
+        return Response(linkForPayment)
 
-            if payment.execute({"payer_id": request.GET.get('PayerID')}):
-                # Payment executed successfully
-                booking.status = 'Successful'
-                booking.save()
-                return Response({"detail":"Payment executed successfully"}, status=status.HTTP_201_CREATED)
-            else:
-                return Response({"detail":"Payment execution failed"}, status=status.HTTP_400_BAD_REQUEST)
-
-        except exceptions.PayPalRESTAPIException as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-class PayPalCancelView(View):
+class CaptureOrderView(APIView):
+    #capture order aims to check whether the user has authorized payments.
     def get(self, request):
-        booking_id = request.GET.get('id')
-        booking = Booking.objects.get(id=booking_id)
+        token = request.data.get('token')#the access token we used above for creating an order, or call the function for generating the token
+        captureurl = request.data.get('url')#captureurl = 'https://api.sandbox.paypal.com/v2/checkout/orders/6KF61042TG097104C/capture'#see transaction status
+        headers = {"Content-Type": "application/json", "Authorization": "Bearer "+token}
+        response = requests.post(captureurl, headers=headers)
+        return Response(response.json())
 
-        # Handle payment cancellation
-        booking.status = 'Failed'
-        booking.save()
+# class PayPalPaymentView(View):
+#     @csrf_exempt
+#     def dispatch(self, *args, **kwargs):
+#         return super().dispatch(*args, **kwargs)
 
-        return Response({"detail":"Payment cancelled"})
+#     def post(self, request, booking_id):
+#         booking = get_object_or_404(Booking, id=booking_id)
+
+#         # Create a PayPal payment object
+#         payment = Payment({
+#             "intent": "sale",
+#             "payer": {"payment_method": "paypal"},
+#             "redirect_urls": {
+#                 "return_url": f"{request.build_absolute_uri('/')}/api/paypal/success/",
+#                 "cancel_url": f"{request.build_absolute_uri('/')}/api/paypal/cancel/",
+#             },
+#             "transactions": [
+#                 {
+#                     "amount": {"total": str(booking.totalPrice), "currency": "USD"},
+#                     "description": f"Booking #{booking.id}",
+#                 }
+#             ],
+#         })
+
+#         if payment.create():
+#             # Save the PayPal payment ID to the booking
+#             booking.paypal_payment_id = payment.id
+#             booking.save()
+
+#             # Get the approval URL from the payment links
+#             for link in payment.links:
+#                 if link.rel == "approval_url":
+#                     approval_url = link.href
+#                     return Response({"redirect_url": approval_url}, content_type="application/json")
+
+#         return Response({"detail": "Error creating PayPal payment"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+# class PayPalSuccessView(View):
+#     def get(self, request):
+#         payment_id = request.GET.get('paypal_payment_id')
+#         booking_id = request.GET.get('id')
+
+#         try:
+#             payment = Payment.find(payment_id)
+#             booking = Booking.objects.get(id=booking_id)
+
+#             if payment.execute({"payer_id": request.GET.get('PayerID')}):
+#                 # Payment executed successfully
+#                 booking.status = 'Successful'
+#                 booking.save()
+#                 return Response({"detail":"Payment executed successfully"}, status=status.HTTP_201_CREATED)
+#             else:
+#                 return Response({"detail":"Payment execution failed"}, status=status.HTTP_400_BAD_REQUEST)
+
+#         except exceptions.PayPalRESTAPIException as e:
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# class PayPalCancelView(View):
+#     def get(self, request):
+#         booking_id = request.GET.get('id')
+#         booking = Booking.objects.get(id=booking_id)
+
+#         # Handle payment cancellation
+#         booking.status = 'Failed'
+#         booking.save()
+
+#         return Response({"detail":"Payment cancelled"})

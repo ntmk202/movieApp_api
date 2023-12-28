@@ -27,8 +27,11 @@ urlpatterns = [
     path('bookings/', Bookings.as_view(), name='booking'),
     path('bookings/<int:pk>/', Bookings.as_view(), name='booking-id'),
 
-    path('paypal/payment/', PayPalPaymentView.as_view(), name='paypal-payment'),
-    path('paypal/success/', PayPalSuccessView.as_view(), name='paypal-success'),
-    path('paypal/cancel/', PayPalCancelView.as_view(), name='paypal-cancel'),
+    # path('paypal/payment/', PayPalPaymentView.as_view(), name='paypal-payment'),
+    # path('paypal/success/', PayPalSuccessView.as_view(), name='paypal-success'),
+    # path('paypal/cancel/', PayPalCancelView.as_view(), name='paypal-cancel'),
+
+    path('paypal/create/order', CreateOrderViewRemote.as_view(), name='ordercreate'),
+    path('paypal/capture/order', CaptureOrderView.as_view(), name='captureorder')
     
 ]

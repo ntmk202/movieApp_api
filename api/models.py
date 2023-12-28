@@ -234,7 +234,7 @@ class Booking(models.Model):
         )
     ], null=True, blank=True)
     showtime = models.ForeignKey(Showtimes, on_delete=models.CASCADE)
-    seat = models.ManyToManyField(Seat)
+    seat = models.CharField(max_length=100, null=True, blank=True)
     voucher = models.ForeignKey(Voucher, on_delete=models.SET_NULL, null=True, blank=True)
     snacks = models.ForeignKey(PopconsAndDrinks, on_delete=models.SET_NULL, null=True, blank=True)
     bookedAt = models.DateTimeField(auto_now_add=True)
@@ -260,13 +260,7 @@ class Booking(models.Model):
         seat_numbers = ', '.join(str(seat.seatNo) for seat in self.seat.all())
         return f'Booking of Seat {seat_numbers} from {self.bookedAt} to {self.expiresIn // 60} hours.'
 
-# class Payment(models.Model):
-#     amount = models.DecimalField(decimal_places=2, max_digits=8)
-#     transactionId = models.CharField(max_length=30)
-#     paymentMethod = models.CharField(max_length=30)
-#     paidAt = models.DateTimeField(auto_now_add=True)
-#     booking = models.OneToOneField(Booking, on_delete=models.CASCADE, primary_key=True
-#                                    , related_name="payment")
+
     
 
 
