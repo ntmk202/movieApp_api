@@ -182,7 +182,7 @@ class Showtimes(models.Model):
                 "type": "object",
                 "readonly":"true",
                 "properties": {
-                    "id": {"type": "string"}
+                    "id": {"type": "string"},
                     "seatNo": {"type": "string"},
                     "is_available": {"type": "boolean"},
                 },
