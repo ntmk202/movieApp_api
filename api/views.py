@@ -27,9 +27,7 @@ class register_user(CreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class user_login(CreateAPIView):
-    model = CustomUser
-    serializer_class = UserSerializer
+class user_login(APIView):
 
     def post(self, request):
         username = request.data.get('email')
