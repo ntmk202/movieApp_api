@@ -206,9 +206,9 @@ class CreateOrderViewRemote(APIView):
         json_data = {
              "intent": "CAPTURE",
              "application_context": {
-                 "notify_url": "http://127.0.0.1:8000/api/",
-                 "return_url": "http://127.0.0.1:8000/api/",#change to your doma$
-                 "cancel_url": "http://127.0.0.1:8000/api/", #change to your domain
+                 "notify_url": "http://127.0.0.1:8000/api/notify",
+                 "return_url": "http://127.0.0.1:8000/api/return",#change to your doma$
+                 "cancel_url": "http://127.0.0.1:8000/api/cancel", #change to your domain
                  "brand_name": "PESAPEDIA SANDBOX",
                  "landing_page": "BILLING",
                  "shipping_preference": "NO_SHIPPING",
