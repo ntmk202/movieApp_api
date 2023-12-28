@@ -207,7 +207,7 @@ def dialogflow_webhook(request):
 
         if intent_name == 'input.suggest_high_view_titles':
             # Get movies with high views
-            high_view_movies = Movie.objects.filter(views__gte=1000000)[:5]  # Adjust the threshold as needed
+            high_view_movies = Movie.objects.filter(views__gte=100)[:5]  # Adjust the threshold as needed
 
             # Construct a response with movie titles
             response_text = "Sure, here are some titles with high views: {}".format(
@@ -216,7 +216,7 @@ def dialogflow_webhook(request):
 
         elif intent_name == 'input.suggest_high_rating_titles':
             # Get movies with high ratings
-            high_rating_movies = Movie.objects.filter(rating__gte=8.0)[:5]  # Adjust the threshold as needed
+            high_rating_movies = Movie.objects.filter(rating__gte=4.0)[:5]  # Adjust the threshold as needed
 
             # Construct a response with movie titles
             response_text = "Certainly, here are some highly-rated titles: {}".format(
