@@ -47,7 +47,7 @@ class user_login(APIView):
             if user.is_active:
                 login(request, user)
                 token, _ = Token.objects.get_or_create(user=user)
-                return Response({'user': [UserRegistSerializer(user).data], 'token': token.key}, status=status.HTTP_200_OK)
+                return Response({'user': UserRegistSerializer(user).data, 'token': token.key}, status=status.HTTP_200_OK)
             else:
                 Response['msg'] = _("Incorrect username or password")
             # login(request, user)
