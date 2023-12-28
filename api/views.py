@@ -254,7 +254,7 @@ class CreateOrderViewRemote(APIView):
         total_price = Booking.totalPrice  # Use the calculation method from your Booking model
 
         # Retrieve an existing booking if it already exists, otherwise create a new one
-        booking_instance = get_or_create_booking()
+        # booking_instance = get_or_create_booking()
 
         json_data = {
             "intent": "CAPTURE",
@@ -288,15 +288,15 @@ class CreateOrderViewRemote(APIView):
         link_for_payment = response.json().get('links', [{}])[1].get('href')
 
         # Update the existing booking with the obtained PayPal details and set status to "success"
-        update_booking_with_paypal_details(booking_instance, order_id)
+        update_booking_with_paypal_details(order_id)
 
         return Response(link_for_payment)
 
-def get_or_create_booking():
-    # Replace with your logic to retrieve an existing booking or create a new one
-    # For example, you can use the user's session or other criteria
-    # Make sure to replace the following line with your actual logic
-    return Booking.objects.first()
+# def get_or_create_booking():
+#     # Replace with your logic to retrieve an existing booking or create a new one
+#     # For example, you can use the user's session or other criteria
+#     # Make sure to replace the following line with your actual logic
+#     return Booking.objects.first()
 
 def update_booking_with_paypal_details(booking_instance, order_id):
     # Update the existing booking with PayPal details and set status to "success"
