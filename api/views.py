@@ -96,23 +96,23 @@ class Movie(ListAPIView, RetrieveAPIView):
     serializer_class = MovieSerializer
     lookup_field = 'title'
 
-    def get_queryset(self):
-        rate = self.request.query_params.get('rate', None)
-        view = self.request.query_params.get('view', None)
-        title = self.request.query_params.get('title', None)
+    # def get_queryset(self):
+    #     rate = self.request.query_params.get('rate', None)
+    #     view = self.request.query_params.get('view', None)
+    #     title = self.request.query_params.get('title', None)
 
-        queryset = Movie.objects.order_by('-views', '-rating', '-title')
+    #     queryset = Movie.objects.order_by('-views', '-rating', '-title')
 
-        if rate:
-            queryset = queryset.filter(rating__gte=rate)
+    #     if rate:
+    #         queryset = queryset.filter(rating__gte=rate)
 
-        if view:
-            queryset = queryset.filter(view__gte=view)
+    #     if view:
+    #         queryset = queryset.filter(view__gte=view)
 
-        if title:
-            queryset = queryset.filter(title__gte=title)
+    #     if title:
+    #         queryset = queryset.filter(title__gte=title)
 
-        return queryset[:10]
+    #     return queryset[:10]
 
 class Actor(ListAPIView, RetrieveAPIView):
     permission_classes = []
