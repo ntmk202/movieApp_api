@@ -59,7 +59,7 @@ class RoomSerializer(serializers.ModelSerializer):
 class SeatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seat
-        fields = ("id","seatNo","price","is_available")
+        fields = "__all__"
 
 class VoucherSerializer(serializers.ModelSerializer):
     class Meta:
@@ -113,7 +113,7 @@ class EvulationSerializer(serializers.ModelSerializer):
 class BookingSerializer(serializers.ModelSerializer):
     # user = ProfileSerializer(read_only=True)
     # showtime = ShowtimeSerializer(read_only=True)
-    seat = SeatSerializer(read_only=True)
+    # seat = SeatSerializer(read_only=True)
     voucher = VoucherSerializer(read_only=True)
     snacks = SnacksSerializer(read_only=True)
     class Meta:
