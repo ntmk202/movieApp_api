@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+from distutils import config
 from pathlib import Path
 import cloudinary_storage
 import dj_database_url
@@ -162,6 +163,14 @@ REST_FRAMEWORK = {
     ],
     # Other settings...
 }
+
+# settings.py
+
+# from decouple import config
+
+DIALOGFLOW_PROJECT_ID = config('moviechatbot-hkek')
+DIALOGFLOW_JSON_KEY_PATH = config('E:\react\ticket-movie-booking\movieApp_api\dialogflow.json')
+
 
 PAYPAL_CLIENT_ID = 'AelfaP8uCClDYqdvbfACU4NeOipSTSU_N_kBp6CY8vtiRZiH4yaDHoqR62i_vw6MZo_s3cNd6PTZlZAT'
 PAYPAL_CLIENT_SECRET = 'EBE2eCqciZ1LWykdhCcOfSfwfHnv_wsNyG2C2rUtT7eYqOeR4VCNqLz-XIbJ3285MA0W8RhNuxj9qPWa'

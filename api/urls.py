@@ -32,6 +32,8 @@ urlpatterns = [
     # path('paypal/cancel/', PayPalCancelView.as_view(), name='paypal-cancel'),
 
     path('paypal/create/order', CreateOrderViewRemote.as_view(), name='ordercreate'),
-    path('paypal/capture/order', CaptureOrderView.as_view(), name='captureorder')
+    path('paypal/capture/order', CaptureOrderView.as_view(), name='captureorder'),
+
+    path('dialogflow-webhook/', dialogflow_webhook, name='dialogflow_webhook'),
     
 ]

@@ -114,6 +114,8 @@ class Movie(ListAPIView, RetrieveAPIView):
 
     #     return queryset[:10]
 
+
+
 class Actor(ListAPIView, RetrieveAPIView):
     permission_classes = []
     authentication_classes = []
@@ -191,6 +193,45 @@ class Bookings(ListCreateAPIView, RetrieveAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
 
+# views.py
+
+from django.http import JsonResponse, HttpResponseBadRequest
+from dialogflow import IntentRecognizer
+
+def dialogflow_webhook(request):
+    try:
+        data = request.body.decode('utf-8')
+        intent_recognizer = IntentRecognizer(data, settings.DIALOGFLOW_PROJECT_ID, settings.DIALOGFLOW_JSON_KEY_PATH)
+
+        intent_name = intent_recognizer.get_intent_display_name()
+
+        if intent_name == 'input.suggest_high_view_titles':
+            # Get movies with high views
+            high_view_movies = Movie.objects.filter(views__gte=1000000)[:5]  # Adjust the threshold as needed
+
+            # Construct a response with movie titles
+            response_text = "Sure, here are some titles with high views: {}".format(
+                ', '.join(movie.title for movie in high_view_movies)
+            )
+
+        elif intent_name == 'input.suggest_high_rating_titles':
+            # Get movies with high ratings
+            high_rating_movies = Movie.objects.filter(rating__gte=8.0)[:5]  # Adjust the threshold as needed
+
+            # Construct a response with movie titles
+            response_text = "Certainly, here are some highly-rated titles: {}".format(
+                ', '.join(movie.title for movie in high_rating_movies)
+            )
+
+        else:
+            response_text = "I'm sorry, I didn't understand that request."
+
+        # Return a response to Dialogflow
+        return JsonResponse({'fulfillmentText': response_text})
+
+    except Exception as e:
+        # Handle errors
+        return HttpResponseBadRequest(str(e))
 
 
 clientID = settings.PAYPAL_CLIENT_ID
