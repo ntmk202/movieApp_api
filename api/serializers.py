@@ -111,8 +111,8 @@ class EvulationSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class BookingSerializer(serializers.ModelSerializer):
-    user = ProfileSerializer(read_only=True)
-    showtime = ShowtimeSerializer(read_only=True)
+    # user = ProfileSerializer(read_only=True)
+    # showtime = ShowtimeSerializer(read_only=True)
     voucher = VoucherSerializer(read_only=True)
     snacks = SnacksSerializer(read_only=True)
     class Meta:
