@@ -27,7 +27,9 @@ class register_user(CreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class user_login(APIView):
+class user_login(CreateAPIView):
+    model = CustomUser
+    serializer_class = UserSerializer
 
     def post(self, request):
         username = request.data.get('email')
@@ -47,7 +49,7 @@ class user_login(APIView):
             if user.is_active:
                 login(request, user)
                 token, _ = Token.objects.get_or_create(user=user)
-                return Response({'user': UserSerializer(user).data, 'token': token.key}, status=status.HTTP_200_OK)
+                return Response({'user': UserRegistSerializer(user).data, 'token': token.key}, status=status.HTTP_200_OK)
             else:
                 Response['msg'] = _("Incorrect username or password")
             # login(request, user)
