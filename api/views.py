@@ -257,32 +257,32 @@ class CreateOrderViewRemote(APIView):
         # booking_instance = get_or_create_booking()
 
         json_data = {
-            "intent": "CAPTURE",
-            "application_context": {
-                "notify_url": "http://movie-api-service-lxyr.onrender.com/api/paypal_notify/",
+             "intent": "CAPTURE",
+             "application_context": {
+                 "notify_url": "http://movie-api-service-lxyr.onrender.com/api/paypal_notify/",
                 "return_url": "http://movie-api-service-lxyr.onrender.com/api/paypal_return/",
                 "cancel_url": "http://movie-api-service-lxyr.onrender.com/api/paypal_cancel/",
-                "brand_name": "YourBrandName",
-                "landing_page": "BILLING",
-                "shipping_preference": "NO_SHIPPING",
-                "user_action": "CONTINUE"
-            },
-            "purchase_units": [
-                {
-                    "reference_id": "YourReferenceID",
-                    "description": "YourProductDescription",
-                    "custom_id": "YourCustomID",
-                    "soft_descriptor": "YourSoftDescriptor",
-                    "amount": {
-                        "currency_code": "USD",
-                        "value": str(total_price)  # Convert the total price to string
+                 "brand_name": "PESAPEDIA SANDBOX",
+                 "landing_page": "BILLING",
+                 "shipping_preference": "NO_SHIPPING",
+                 "user_action": "CONTINUE"
+             },
+             "purchase_units": [
+                 {
+                     "reference_id": "294375635",
+                     "description": "African Art and Collectibles",
+
+                     "custom_id": "CUST-AfricanFashion",
+                     "soft_descriptor": "AfricanFashions",
+                     "amount": {
+                         "currency_code": "USD",
+                         "value": str(total_price) #amount,
                     },
                 }
             ]
         }
 
-        response = requests.post('https://api-m.sandbox.paypal.com/v2/checkout/orders', headers=headers,
-                                json=json_data)
+        response = requests.post('https://api-m.sandbox.paypal.com/v2/checkout/orders', headers=headers, json=json_data)
 
         order_id = response.json().get('id')
         link_for_payment = response.json().get('links', [{}])[1].get('href')
