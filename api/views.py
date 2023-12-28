@@ -47,7 +47,7 @@ class user_login(APIView):
             if user.is_active:
                 login(request, user)
                 token, _ = Token.objects.get_or_create(user=user)
-                return Response({'user': UserRegistSerializer(user).data, 'token': token.key}, status=status.HTTP_200_OK)
+                return Response({'user': UserSerializer(user).data, 'token': token.key}, status=status.HTTP_200_OK)
             else:
                 Response['msg'] = _("Incorrect username or password")
             # login(request, user)
@@ -195,73 +195,20 @@ def PaypalToken(client_ID, client_Secret):
     return token.json()['access_token']
     
 
-# class CreateOrderViewRemote(APIView):
-
-#     def get(self, request):
-#         token = PaypalToken(clientID, clientSecret)
-#         headers = {
-#             'Content-Type': 'application/json',
-#             'Authorization': 'Bearer '+token,
-#         }
-#         json_data = {
-#              "intent": "CAPTURE",
-#              "application_context": {
-#                  "notify_url": "http://127.0.0.1:8000/api/notify",
-#                  "return_url": "http://127.0.0.1:8000/api/return",#change to your doma$
-#                  "cancel_url": "http://127.0.0.1:8000/api/cancel", #change to your domain
-#                  "brand_name": "PESAPEDIA SANDBOX",
-#                  "landing_page": "BILLING",
-#                  "shipping_preference": "NO_SHIPPING",
-#                  "user_action": "CONTINUE"
-#              },
-#              "purchase_units": [
-#                  {
-#                      "reference_id": "294375635",
-#                      "description": "African Art and Collectibles",
-
-#                      "custom_id": "CUST-AfricanFashion",
-#                      "soft_descriptor": "AfricanFashions",
-#                      "amount": {
-#                          "currency_code": "USD",
-#                          "value": "200" #amount,
-#                      },
-#                  }
-#              ]
-#          }
-#         response = requests.post('https://api-m.sandbox.paypal.com/v2/checkout/orders', headers=headers, json=json_data)
-#         order_id = response.json()['id']
-#         linkForPayment = response.json()['links'][1]['href']
-#         return Response(linkForPayment)
-
-class CaptureOrderView(APIView):
-    #capture order aims to check whether the user has authorized payments.
-    def get(self, request):
-        token = request.data.get('token')#the access token we used above for creating an order, or call the function for generating the token
-        captureurl = request.data.get('url')#captureurl = 'https://api.sandbox.paypal.com/v2/checkout/orders/6KF61042TG097104C/capture'#see transaction status
-        headers = {"Content-Type": "application/json", "Authorization": "Bearer "+token}
-        response = requests.post(captureurl, headers=headers)
-        return Response(response.json())
-
 class CreateOrderViewRemote(APIView):
+
     def get(self, request):
         token = PaypalToken(clientID, clientSecret)
         headers = {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token,
+            'Authorization': 'Bearer '+token,
         }
-
-        # Example JSON data, replace with your actual values
-        total_price = Booking.totalPrice  # Use the calculation method from your Booking model
-
-        # Retrieve an existing booking if it already exists, otherwise create a new one
-        # booking_instance = get_or_create_booking()
-
         json_data = {
              "intent": "CAPTURE",
              "application_context": {
-                 "notify_url": "http://movie-api-service-lxyr.onrender.com/api/paypal_notify/",
-                "return_url": "http://movie-api-service-lxyr.onrender.com/api/paypal_return/",
-                "cancel_url": "http://movie-api-service-lxyr.onrender.com/api/paypal_cancel/",
+                 "notify_url": "http://movie-api-service-lxyr.onrender.com/api/notify",
+                 "return_url": "http://movie-api-service-lxyr.onrender.com/api/return",#change to your doma$
+                 "cancel_url": "http://movie-api-service-lxyr.onrender.com/api/cancel", #change to your domain
                  "brand_name": "PESAPEDIA SANDBOX",
                  "landing_page": "BILLING",
                  "shipping_preference": "NO_SHIPPING",
@@ -276,35 +223,25 @@ class CreateOrderViewRemote(APIView):
                      "soft_descriptor": "AfricanFashions",
                      "amount": {
                          "currency_code": "USD",
-                         "value": str(total_price) #amount,
-                    },
-                }
-            ]
-        }
-
+                         "value": "200" #amount,
+                     },
+                 }
+             ]
+         }
         response = requests.post('https://api-m.sandbox.paypal.com/v2/checkout/orders', headers=headers, json=json_data)
+        order_id = response.json()['id']
+        linkForPayment = response.json()['links'][1]['href']
+        return Response(linkForPayment)
 
-        order_id = response.json().get('id')
-        link_for_payment = response.json().get('links', [{}])[1].get('href')
+class CaptureOrderView(APIView):
+    #capture order aims to check whether the user has authorized payments.
+    def get(self, request):
+        token = request.data.get('token')#the access token we used above for creating an order, or call the function for generating the token
+        captureurl = request.data.get('url')#captureurl = 'https://api.sandbox.paypal.com/v2/checkout/orders/6KF61042TG097104C/capture'#see transaction status
+        headers = {"Content-Type": "application/json", "Authorization": "Bearer "+token}
+        response = requests.post(captureurl, headers=headers)
+        return Response(response.json())
 
-        # Update the existing booking with the obtained PayPal details and set status to "success"
-        update_booking_with_paypal_details(order_id)
-
-        return Response(link_for_payment)
-
-# def get_or_create_booking():
-#     # Replace with your logic to retrieve an existing booking or create a new one
-#     # For example, you can use the user's session or other criteria
-#     # Make sure to replace the following line with your actual logic
-#     return Booking.objects.first()
-
-def update_booking_with_paypal_details(booking_instance, order_id):
-    # Update the existing booking with PayPal details and set status to "success"
-    # For example, you can set the 'paypal_payment_id' field and update the 'status'
-    booking_instance.paypal_payment_id = order_id
-    booking_instance.status = 'Successful'
-    booking_instance.save()
-    
 # class PayPalPaymentView(View):
 #     @csrf_exempt
 #     def dispatch(self, *args, **kwargs):

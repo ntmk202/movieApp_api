@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-s5q$yc11o!v!qx=ls#2hlgh#&n5%5r3b*o(q9y_#sw^)5j50*+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 # APPEND_SLASH = False
 
 ALLOWED_HOSTS = ["*"]
@@ -163,8 +163,8 @@ REST_FRAMEWORK = {
     # Other settings...
 }
 
-PAYPAL_CLIENT_ID = "AelfaP8uCClDYqdvbfACU4NeOipSTSU_N_kBp6CY8vtiRZiH4yaDHoqR62i_vw6MZo_s3cNd6PTZlZAT"
-PAYPAL_CLIENT_SECRET = "EBE2eCqciZ1LWykdhCcOfSfwfHnv_wsNyG2C2rUtT7eYqOeR4VCNqLz-XIbJ3285MA0W8RhNuxj9qPWa"
+PAYPAL_CLIENT_ID = 'AelfaP8uCClDYqdvbfACU4NeOipSTSU_N_kBp6CY8vtiRZiH4yaDHoqR62i_vw6MZo_s3cNd6PTZlZAT'
+PAYPAL_CLIENT_SECRET = 'EBE2eCqciZ1LWykdhCcOfSfwfHnv_wsNyG2C2rUtT7eYqOeR4VCNqLz-XIbJ3285MA0W8RhNuxj9qPWa'
 PAYPAL_MODE = 'sandbox'
 
 PAYPAL_RECEIVER_EMAIL = 'ntmkhue.20it6@vku.udn.vn'
